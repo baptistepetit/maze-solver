@@ -1,4 +1,6 @@
 import {
+    AmbientLight,
+    DirectionalLight,
     PerspectiveCamera,
     Scene,
     WebGLRenderer,
@@ -19,6 +21,11 @@ export class Visualizer {
         this.container = _container;
         this.renderer = new WebGLRenderer({ canvas: _canvas });
         this.scene = new Scene();
+
+        const ambientLight = new AmbientLight(0xCCCCCC, 0.4);
+        const directionalLight = new DirectionalLight();
+        this.scene.add(ambientLight);
+        this.scene.add(directionalLight);
     }
 
     private animate(): void {
