@@ -1,17 +1,16 @@
 import {
-    BoxGeometry,
-    Mesh,
-    MeshBasicMaterial,
     PerspectiveCamera,
     Scene,
     WebGLRenderer,
 } from 'three';
 
-export class View {
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+
+export class Visualizer {
     private camera: PerspectiveCamera;
     private container: HTMLDivElement;
-    private cube: Mesh;
     private renderer: WebGLRenderer;
+
     private scene: Scene;
 
     constructor(_canvas: HTMLCanvasElement, _container: HTMLDivElement) {
@@ -20,21 +19,17 @@ export class View {
         this.container = _container;
         this.renderer = new WebGLRenderer({ canvas: _canvas });
         this.scene = new Scene();
-
-        // Example Object
-        const geometry = new BoxGeometry();
-        const material = new MeshBasicMaterial({ color: 0x00ff00 });
-        this.cube = new Mesh(geometry, material);
-        this.scene.add(this.cube);
     }
 
     private animate(): void {
-        this.cube.rotation.x += 0.01;
-        this.cube.rotation.y += 0.01;
-
         this.renderer.render(this.scene, this.camera);
-
         requestAnimationFrame(this.animate.bind(this));
+    }
+
+    loadMaze(obj: string): void {
+        const objLoader = new OBJLoader();
+        const mazeObj = objLoader.parse(obj);
+        this.scene.add(mazeObj);
     }
 
     resize(): void {
