@@ -1,12 +1,17 @@
 import {
     AmbientLight,
     Box3,
+    Color,
     DirectionalLight,
     Object3D,
+    Material,
+    Mesh,
+    MeshPhongMaterial,
     PerspectiveCamera,
     Scene,
     Vector3,
     WebGLRenderer,
+    DoubleSide,
 } from 'three';
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -18,6 +23,7 @@ export class Visualizer {
     private renderer: WebGLRenderer;
     private controls: OrbitControls;
     private scene: Scene;
+    private materials: Map<string, Material>;
 
     constructor(_canvas: HTMLCanvasElement, _container: HTMLDivElement) {
         this.camera = new PerspectiveCamera(75, _canvas.clientWidth / _canvas.clientHeight, 0.1, 1000);
@@ -25,8 +31,31 @@ export class Visualizer {
         this.container = _container;
         this.renderer = new WebGLRenderer({ canvas: _canvas });
         this.scene = new Scene();
+        this.scene.background = new Color(0x2A2A2A);
         this.controls = new OrbitControls(this.camera, _canvas);
         this.controls.update();
+
+        this.materials = new Map<string, Material>();
+        const MaterialEnd = new MeshPhongMaterial({
+            color: 0x6CFF00,
+            side: DoubleSide,
+        });
+        const MaterialNone = new MeshPhongMaterial({
+            color: 0xACACAC,
+            side: DoubleSide,
+        });
+        const MaterialPath = new MeshPhongMaterial({
+            color: 0xFF3D14,
+            side: DoubleSide,
+        });
+        const MaterialStart = new MeshPhongMaterial({
+            color: 0x0093FF,
+            side: DoubleSide,
+        });
+        this.materials.set('End', MaterialEnd);
+        this.materials.set('None', MaterialNone);
+        this.materials.set('Path', MaterialPath);
+        this.materials.set('Start', MaterialStart);
 
         const ambientLight = new AmbientLight(0xCCCCCC, 0.4);
         const directionalLight = new DirectionalLight();
@@ -69,6 +98,11 @@ export class Visualizer {
     loadMaze(obj: string): void {
         const objLoader = new OBJLoader();
         const mazeObj = objLoader.parse(obj);
+        mazeObj.traverse((child) => {
+            if (child instanceof Mesh) {
+                child.material = this.materials.get('None');
+            }
+        });
         this.scene.add(mazeObj);
         this.fitCameraToObject(mazeObj);
     }
