@@ -27,3 +27,19 @@ h1, p {
     align-items: center;
     height: 70vh;
 }
+
+.button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.on {
+    background: #efefef;
+    border-style: inset;
+}
+
+.off {
+    background: #acacac;
+    border-style: outset;
+}

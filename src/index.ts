@@ -1,13 +1,17 @@
 import '../style/main.css';
 import { Visualizer } from './views/visualizer';
 import { Maze } from './models/maze';
+import { Buttons } from './views/buttons';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement;
 const container = document.getElementById('appContainer') as HTMLDivElement;
 const fileLoader = document.getElementById('fileLoader') as HTMLInputElement;
+const selectStart = document.getElementById('selectStart') as HTMLButtonElement;
+const selectEnd = document.getElementById('selectEnd') as HTMLButtonElement;
 
-const visualizer = new Visualizer(canvas, container);
+const buttons = new Buttons(selectStart, selectEnd);
 const maze = new Maze();
+const visualizer = new Visualizer(canvas, container);
 
 window.addEventListener('load', () => visualizer.init());
 window.addEventListener('resize', () => visualizer.resize());
@@ -22,3 +26,6 @@ fileLoader.addEventListener('change', (event) => {
     const file = eventTarget.files[0];
     loadMaze(file);
 });
+
+selectStart.addEventListener('click', () => buttons.selectStart());
+selectEnd.addEventListener('click', () => buttons.selectEnd());
