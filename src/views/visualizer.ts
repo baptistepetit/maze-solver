@@ -8,6 +8,7 @@ import {
     Mesh,
     MeshPhongMaterial,
     PerspectiveCamera,
+    Raycaster,
     Scene,
     Vector3,
     WebGLRenderer,
@@ -24,6 +25,7 @@ export class Visualizer {
     private controls: OrbitControls;
     private scene: Scene;
     private materials: Map<string, Material>;
+    private raycaster: Raycaster;
 
     constructor(_canvas: HTMLCanvasElement, _container: HTMLDivElement) {
         this.camera = new PerspectiveCamera(75, _canvas.clientWidth / _canvas.clientHeight, 0.1, 1000);
@@ -34,6 +36,7 @@ export class Visualizer {
         this.scene.background = new Color(0x2A2A2A);
         this.controls = new OrbitControls(this.camera, _canvas);
         this.controls.update();
+        this.raycaster = new Raycaster();
 
         this.materials = new Map<string, Material>();
         const MaterialEnd = new MeshPhongMaterial({
@@ -95,16 +98,35 @@ export class Visualizer {
         this.controls.update();
     }
 
+    private setMaterial(object: Object3D, material: string): void {
+        object.traverse((child) => {
+            if (child instanceof Mesh) {
+                child.material = this.materials.get(material);
+            }
+        });
+    }
+
+    init(): void {
+        this.resize();
+        this.animate();
+    }
+
     loadMaze(obj: string): void {
         const objLoader = new OBJLoader();
         const mazeObj = objLoader.parse(obj);
-        mazeObj.traverse((child) => {
-            if (child instanceof Mesh) {
-                child.material = this.materials.get('None');
-            }
-        });
+        this.setMaterial(mazeObj, 'None');
         this.scene.add(mazeObj);
         this.fitCameraToObject(mazeObj);
+    }
+
+    pick(position: {x: number, y: number}): string {
+        this.raycaster.setFromCamera(position, this.camera);
+        const intersectedObjects = this.raycaster.intersectObjects(this.scene.children, true);
+        if (intersectedObjects.length > 0) {
+            const closestObject = intersectedObjects[0].object;
+            return closestObject.name;
+        }
+        return null;
     }
 
     resize(): void {
@@ -113,8 +135,8 @@ export class Visualizer {
         this.camera.updateProjectionMatrix();
     }
 
-    init(): void {
-        this.resize();
-        this.animate();
+    setMaterialFromName(name: string, material: string): void {
+        const object = this.scene.getObjectByName(name);
+        this.setMaterial(object, material);
     }
 }

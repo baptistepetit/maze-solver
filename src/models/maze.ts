@@ -1,10 +1,14 @@
 export class Maze {
     obj: string;
+    startFace: string;
+    endFace: string;
 
     constructor(file?: Blob) {
         if (file) {
             this.loadFromFile(file);
         }
+        this.startFace = null;
+        this.endFace = null;
     }
 
     loadFromFile(file: Blob): Promise<void> {

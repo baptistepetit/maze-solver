@@ -21,6 +21,46 @@ async function loadMaze(file: Blob) {
     visualizer.loadMaze(maze.obj);
 }
 
+function getPointerPosition(event: PointerEvent) {
+    const canvasLocation = canvas.getBoundingClientRect();
+    return {
+        x: -1 + 2 * (event.clientX - canvasLocation.left) / canvas.clientWidth,
+        y:  1 - 2 * (event.clientY - canvasLocation.top) / canvas.clientHeight,
+    };
+}
+
+function selectFace(event: PointerEvent) {
+    const pickedFace = visualizer.pick(
+        getPointerPosition(event)
+    );
+
+    if (buttons.isSelectingStart && pickedFace != null) {
+        if (maze.startFace !== null) {
+            visualizer.setMaterialFromName(maze.startFace, 'None');
+        }
+        if (pickedFace === maze.endFace) {
+            maze.endFace = null;
+        }
+        maze.startFace = pickedFace;
+        visualizer.setMaterialFromName(
+            pickedFace,
+            'Start'
+        );
+    } else if (buttons.isSelectingEnd && pickedFace != null) {
+        if (maze.endFace !== null) {
+            visualizer.setMaterialFromName(maze.endFace, 'None');
+        }
+        if (pickedFace === maze.startFace) {
+            maze.startFace = null;
+        }
+        maze.endFace = pickedFace;
+        visualizer.setMaterialFromName(
+            pickedFace,
+            'End'
+        );
+    }
+}
+
 fileLoader.addEventListener('change', (event) => {
     const eventTarget = event.target as HTMLInputElement;
     const file = eventTarget.files[0];
@@ -29,3 +69,5 @@ fileLoader.addEventListener('change', (event) => {
 
 selectStart.addEventListener('click', () => buttons.selectStart());
 selectEnd.addEventListener('click', () => buttons.selectEnd());
+
+canvas.addEventListener('pointerdown', (event) => selectFace(event));
