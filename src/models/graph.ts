@@ -1,4 +1,4 @@
-export type Node = number;
+export type Node = string;
 
 export interface GraphEdge {
     adjacent: Node,
@@ -39,5 +39,9 @@ export class Graph {
 
     getEdges(node: Node): GraphEdge[] {
         return this.nodes.get(node);
+    }
+
+    getNodes(): IterableIterator<Node> {
+        return this.nodes.keys();
     }
 }

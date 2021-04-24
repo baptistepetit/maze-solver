@@ -76,8 +76,10 @@ export class Maze {
                     p1: vertices[edgeIndices.v1],
                     p2: vertices[edgeIndices.v2],
                 };
+                const faceName0 = 'Face.' + value[0];
+                const faceName1 = 'Face.' + value[1];
                 const distance = DistanceBetweenFaces(face1, face2, commonEdge);
-                this.graph.addEdge(value[0], value[1], distance);
+                this.graph.addEdge(faceName0, faceName1, distance);
             }
         });
     }

@@ -9,16 +9,16 @@ export class DijkstraSolver implements Solver {
         const unvisited = new Map<Node, boolean>();
 
         // Init
-        for (let i = 0; i < graph.order; i++) {
-            unvisited.set(i, true);
-            distanceToStart.set(i, { shortestDistance: Infinity, previousNode: NaN });
+        for (const node of graph.getNodes()) {
+            unvisited.set(node, true);
+            distanceToStart.set(node, { shortestDistance: Infinity, previousNode: null });
         }
-        distanceToStart.set(start, { shortestDistance: 0, previousNode: NaN });
+        distanceToStart.set(start, { shortestDistance: 0, previousNode: null });
 
         // Greedy Solving
         while (!visited.has(end)) {
             let globalShortestDistance = Infinity;
-            let currentNode = NaN;
+            let currentNode: Node = null;
             distanceToStart.forEach((value, key) => {
                 if ((value.shortestDistance < globalShortestDistance) &&
                     (!visited.has(key))) {

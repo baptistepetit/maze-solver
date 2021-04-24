@@ -1,6 +1,7 @@
 import '../style/main.css';
 import { Visualizer } from './views/visualizer';
 import { Maze } from './models/maze';
+import { DijkstraSolver } from './models/solvers';
 import { Buttons } from './views/buttons';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement;
@@ -12,6 +13,7 @@ const selectEnd = document.getElementById('selectEnd') as HTMLButtonElement;
 const buttons = new Buttons(selectStart, selectEnd);
 const maze = new Maze();
 const visualizer = new Visualizer(canvas, container);
+const solver = new DijkstraSolver();
 
 window.addEventListener('load', () => visualizer.init());
 window.addEventListener('resize', () => visualizer.resize());
@@ -58,6 +60,16 @@ function selectFace(event: PointerEvent) {
             pickedFace,
             'End'
         );
+    }
+
+    if (maze.startFace !== null && maze.endFace !== null) {
+        // TODO: Clean previous path material
+        const solution = solver.solve(maze.graph, maze.startFace, maze.endFace);
+        solution.forEach((value, key) => {
+            if (key !== maze.startFace && key !==maze.endFace) {
+                visualizer.setMaterialFromName(key, 'Path');
+            }
+        });
     }
 }
 
