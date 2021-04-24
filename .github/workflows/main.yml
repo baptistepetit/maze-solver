@@ -1,0 +1,56 @@
+name: Main Branch Event
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: npm ci
+    - name: Run the linter
+      run: npm run lint
+    - name: Test building the application
+      run: npm run build
+    - name: Save website artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: demo-website
+        path: ${{ github.workspace }}/dist
+        if-no-files-found: error
+
+  gh-pages-deploy:
+    needs: lint-and-build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+    - name: Setup independent git worktree to receive artifacts
+      run: ./scripts/deploy_gh_pages_setup.sh "dist"
+    - name: Download website artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: demo-website
+        path: ${{ github.workspace }}/dist
+    - name: Deploy gh-pages website
+      run: ./scripts/deploy_gh_pages_push_and_clean.sh "dist"
