@@ -57,28 +57,28 @@ export class Maze {
             });
         });
 
-        edgeCommonFaces.forEach((value, key) => {
-            if (value.length == 2) {  // else is non-shared or impossible
+        edgeCommonFaces.forEach((contiguousFaceIndices, commonEdge) => {
+            if (contiguousFaceIndices.length == 2) {  // else is non-shared or impossible
                 const face1: Face3D = {
-                    p1: vertices[faces[value[0]].v1],
-                    p2: vertices[faces[value[0]].v2],
-                    p3: vertices[faces[value[0]].v3],
-                    p4: vertices[faces[value[0]].v4],
+                    p1: vertices[faces[contiguousFaceIndices[0]].v1],
+                    p2: vertices[faces[contiguousFaceIndices[0]].v2],
+                    p3: vertices[faces[contiguousFaceIndices[0]].v3],
+                    p4: vertices[faces[contiguousFaceIndices[0]].v4],
                 };
                 const face2: Face3D = {
-                    p1: vertices[faces[value[1]].v1],
-                    p2: vertices[faces[value[1]].v2],
-                    p3: vertices[faces[value[1]].v3],
-                    p4: vertices[faces[value[1]].v4],
+                    p1: vertices[faces[contiguousFaceIndices[1]].v1],
+                    p2: vertices[faces[contiguousFaceIndices[1]].v2],
+                    p3: vertices[faces[contiguousFaceIndices[1]].v3],
+                    p4: vertices[faces[contiguousFaceIndices[1]].v4],
                 };
-                const edgeIndices: ObjEdge = JSON.parse(key);
-                const commonEdge: Edge3D = {
+                const edgeIndices: ObjEdge = JSON.parse(commonEdge);
+                const edge: Edge3D = {
                     p1: vertices[edgeIndices.v1],
                     p2: vertices[edgeIndices.v2],
                 };
-                const faceName0 = 'Face.' + value[0];
-                const faceName1 = 'Face.' + value[1];
-                const distance = DistanceBetweenFaces(face1, face2, commonEdge);
+                const faceName0 = 'Face.' + contiguousFaceIndices[0];
+                const faceName1 = 'Face.' + contiguousFaceIndices[1];
+                const distance = DistanceBetweenFaces(face1, face2, edge);
                 this.graph.addEdge(faceName0, faceName1, distance);
             }
         });
