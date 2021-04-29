@@ -1,6 +1,14 @@
-import { Edge3D, Face3D, Point3D, DistanceBetweenFaces } from './geometry';
+import {
+    Edge3D,
+    Face3D,
+    Point3D,
+    distanceBetweenFaces,
+} from './geometry';
+import {
+    ObjEdge,
+    ObjFace
+} from './obj';
 import { Graph } from './graph';
-import { ObjEdge, ObjFace } from './obj';
 
 
 export class Maze {
@@ -53,7 +61,7 @@ export class Maze {
 
                 const faceName0 = 'Face.' + contiguousFaceIndices[0];
                 const faceName1 = 'Face.' + contiguousFaceIndices[1];
-                const distance = DistanceBetweenFaces(face1, face2, edge);
+                const distance = distanceBetweenFaces(face1, face2, edge);
                 this.graph.addEdge(faceName0, faceName1, distance);
             }
         });

@@ -16,6 +16,15 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "@typescript-eslint/naming-convention": [
+            "error",
+            { "selector": "default", "format": ["camelCase"] },
+            { "selector": "parameter", "format": ["camelCase"], "leadingUnderscore": "allow" },
+            { "selector": "typeAlias", "format": ["PascalCase"] },
+            { "selector": "interface", "format": ["PascalCase"] },
+            { "selector": "class", "format": ["PascalCase"] }
+        ],
+        "sort-imports": ["error"],
         "indent": [
             "error",
             4

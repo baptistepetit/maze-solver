@@ -50,6 +50,6 @@ function distanceCenterToEdge(face: Face3D, edge: Edge3D): number {
     );
 }
 
-export function DistanceBetweenFaces(f1: Face3D, f2: Face3D, commonEdge: Edge3D): number {
+export function distanceBetweenFaces(f1: Face3D, f2: Face3D, commonEdge: Edge3D): number {
     return distanceCenterToEdge(f1, commonEdge) + distanceCenterToEdge(f2, commonEdge);
 }

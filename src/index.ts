@@ -1,8 +1,8 @@
 import '../style/main.css';
-import { Visualizer } from './views/visualizer';
-import { Maze } from './models/maze';
-import { DijkstraSolver } from './models/solvers';
 import { Buttons } from './views/buttons';
+import { DijkstraSolver } from './models/solvers';
+import { Maze } from './models/maze';
+import { Visualizer } from './views/visualizer';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement;
 const container = document.getElementById('appContainer') as HTMLDivElement;

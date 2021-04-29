@@ -1,5 +1,8 @@
+import {
+    Graph,
+    Node,
+} from '../graph';
 import { Solver } from './solver';
-import { Graph, Node } from '../graph';
 
 export class DijkstraSolver implements Solver {
     solve(graph: Graph, start: Node, end: Node): Map<Node, boolean> {

@@ -3,16 +3,16 @@ import {
     Box3,
     Color,
     DirectionalLight,
-    Object3D,
+    DoubleSide,
     Material,
     Mesh,
     MeshPhongMaterial,
+    Object3D,
     PerspectiveCamera,
     Raycaster,
     Scene,
     Vector3,
     WebGLRenderer,
-    DoubleSide,
 } from 'three';
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -39,26 +39,26 @@ export class Visualizer {
         this.raycaster = new Raycaster();
 
         this.materials = new Map<string, Material>();
-        const MaterialEnd = new MeshPhongMaterial({
+        const materialEnd = new MeshPhongMaterial({
             color: 0x6CFF00,
             side: DoubleSide,
         });
-        const MaterialNone = new MeshPhongMaterial({
+        const materialNone = new MeshPhongMaterial({
             color: 0xACACAC,
             side: DoubleSide,
         });
-        const MaterialPath = new MeshPhongMaterial({
+        const materialPath = new MeshPhongMaterial({
             color: 0xFF3D14,
             side: DoubleSide,
         });
-        const MaterialStart = new MeshPhongMaterial({
+        const materialStart = new MeshPhongMaterial({
             color: 0x0093FF,
             side: DoubleSide,
         });
-        this.materials.set('End', MaterialEnd);
-        this.materials.set('None', MaterialNone);
-        this.materials.set('Path', MaterialPath);
-        this.materials.set('Start', MaterialStart);
+        this.materials.set('End', materialEnd);
+        this.materials.set('None', materialNone);
+        this.materials.set('Path', materialPath);
+        this.materials.set('Start', materialStart);
 
         const ambientLight = new AmbientLight(0xCCCCCC, 0.4);
         const directionalLight = new DirectionalLight();
