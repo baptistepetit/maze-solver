@@ -9,11 +9,18 @@ export interface Edge3D {
     p2: Point3D,
 }
 
-export interface Face3D {
-    p1: Point3D,
-    p2: Point3D,
-    p3: Point3D,
-    p4?: Point3D,
+export class Face3D {
+    public p1: Point3D;
+    public p2: Point3D;
+    public p3: Point3D;
+    public p4: Point3D;
+
+    constructor (p1: Point3D, p2: Point3D, p3: Point3D, p4?: Point3D) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.p3 = p3;
+        this.p4 = p4 ? p4 : null;
+    }
 }
 
 function distanceCenterToEdge(face: Face3D, edge: Edge3D): number {
