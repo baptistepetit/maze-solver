@@ -13,7 +13,7 @@ export interface Face3D {
     p1: Point3D,
     p2: Point3D,
     p3: Point3D,
-    p4: Point3D,
+    p4?: Point3D,
 }
 
 function distanceCenterToEdge(face: Face3D, edge: Edge3D): number {
@@ -23,12 +23,18 @@ function distanceCenterToEdge(face: Face3D, edge: Edge3D): number {
         z: (edge.p1.z + edge.p2.z) / 2
     };
 
-    // Presuppose Planar Convex Oriented Quads
+    // Presuppose Planar Convex Oriented Quads or Triangles
+    const weight = face.p4 ? 4 : 3;
     const faceCentroid: Point3D = {
-        x: (face.p1.x + face.p2.x + face.p3.x + face.p4.x) / 4,
-        y: (face.p1.y + face.p2.y + face.p3.y + face.p4.y) / 4,
-        z: (face.p1.z + face.p2.z + face.p3.z + face.p4.z) / 4
+        x: (face.p1.x + face.p2.x + face.p3.x) / weight,
+        y: (face.p1.y + face.p2.y + face.p3.y) / weight,
+        z: (face.p1.z + face.p2.z + face.p3.z) / weight
     };
+    if (face.p4) {
+        faceCentroid.x += face.p4.x / weight;
+        faceCentroid.y += face.p4.y / weight;
+        faceCentroid.z += face.p4.z / weight;
+    }
 
     return Math.sqrt(
         (edgeMiddle.x - faceCentroid.x) * (edgeMiddle.x - faceCentroid.x)
