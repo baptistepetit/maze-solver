@@ -1,17 +1,7 @@
 import { Edge3D, Face3D, Point3D, DistanceBetweenFaces } from './geometry';
 import { Graph } from './graph';
+import { ObjEdge, ObjFace } from './obj';
 
-interface ObjEdge {
-    v1: number,
-    v2: number,
-}
-
-interface ObjFace {
-    v1: number,
-    v2: number,
-    v3: number,
-    v4?: number,
-}
 
 export class Maze {
     obj: string;
@@ -28,36 +18,15 @@ export class Maze {
         this.graph = new Graph();
     }
 
-    // Completely arbitrary function to ensure consistent
-    // equality after stringification
-    private orderEdge(edge: ObjEdge): ObjEdge {
-        if (edge.v1 < edge.v2) {
-            return edge;
-        } else {
-            return { v1: edge.v2, v2: edge.v1 };
-        }
-    }
-
     private buildGraph(faces: ObjFace[], vertices: Point3D[]): void {
         const edgeCommonFaces = new Map<string, number[]>();
         faces.forEach((face, faceIndex) => {
-            const edges: ObjEdge[] = [];
-            if (face.v4) {
-                edges.push({v1: face.v1, v2: face.v2});
-                edges.push({v1: face.v2, v2: face.v3});
-                edges.push({v1: face.v3, v2: face.v4});
-                edges.push({v1: face.v4, v2: face.v1});
-            } else {
-                edges.push({v1: face.v1, v2: face.v2});
-                edges.push({v1: face.v2, v2: face.v3});
-                edges.push({v1: face.v3, v2: face.v1});
-            }
-
+            const edges = face.getEdges();
             edges.forEach((edge) => {
-                if (edgeCommonFaces.has(JSON.stringify(this.orderEdge(edge)))) {
-                    edgeCommonFaces.get(JSON.stringify(this.orderEdge(edge))).push(faceIndex);
+                if (edgeCommonFaces.has(JSON.stringify(edge))) {
+                    edgeCommonFaces.get(JSON.stringify(edge)).push(faceIndex);
                 } else {
-                    edgeCommonFaces.set(JSON.stringify(this.orderEdge(edge)), [faceIndex]);
+                    edgeCommonFaces.set(JSON.stringify(edge), [faceIndex]);
                 }
             });
         });
@@ -128,14 +97,12 @@ export class Maze {
             }
 
             if (cols[0] === 'f') {
-                objFaces[faceCount] = {
-                    v1: parseInt(cols[1]) - 1,
-                    v2: parseInt(cols[2]) - 1,
-                    v3: parseInt(cols[3]) - 1,
-                };
-                if (cols[4]) {
-                    objFaces[faceCount].v4 = parseInt(cols[4]) - 1;
-                }
+                objFaces[faceCount] = new ObjFace(
+                    parseInt(cols[1]) - 1,
+                    parseInt(cols[2]) - 1,
+                    parseInt(cols[3]) - 1,
+                    parseInt(cols[4]) - 1
+                );
                 faceCount++;
             }
         });
