@@ -14,11 +14,13 @@ const buttons = new Buttons(selectStart, selectEnd);
 const maze = new Maze();
 const visualizer = new Visualizer(canvas, container);
 const solver = new DijkstraSolver();
+let solution: Map<string, boolean>;
 
 window.addEventListener('load', () => visualizer.init());
 window.addEventListener('resize', () => visualizer.resize());
 
 async function loadMaze(file: Blob) {
+    solution = null;
     await maze.loadFromFile(file);
     visualizer.loadMaze(maze.obj);
 }
@@ -63,8 +65,12 @@ function selectFace(event: PointerEvent) {
     }
 
     if (maze.startFace !== null && maze.endFace !== null) {
-        // TODO: Clean previous path material
-        const solution = solver.solve(maze.graph, maze.startFace, maze.endFace);
+        solution?.forEach((value, key) => {
+            if (key !== maze.startFace && key !==maze.endFace) {
+                visualizer.setMaterialFromName(key, 'None');
+            }
+        });
+        solution = solver.solve(maze.graph, maze.startFace, maze.endFace);
         solution.forEach((value, key) => {
             if (key !== maze.startFace && key !==maze.endFace) {
                 visualizer.setMaterialFromName(key, 'Path');
