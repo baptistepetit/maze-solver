@@ -2,6 +2,7 @@ import '../style/main.css';
 import { Buttons } from './views/buttons';
 import { DijkstraSolver } from './models/solvers';
 import { Maze } from './models/maze';
+import { Obj } from './models/obj';
 import { Visualizer } from './views/visualizer';
 
 const canvas = document.getElementById('scene') as HTMLCanvasElement;
@@ -11,6 +12,7 @@ const selectStart = document.getElementById('selectStart') as HTMLButtonElement;
 const selectEnd = document.getElementById('selectEnd') as HTMLButtonElement;
 
 const buttons = new Buttons(selectStart, selectEnd);
+const obj = new Obj();
 const maze = new Maze();
 const visualizer = new Visualizer(canvas, container);
 const solver = new DijkstraSolver();
@@ -21,8 +23,9 @@ window.addEventListener('resize', () => visualizer.resize());
 
 async function loadMaze(file: Blob) {
     solution = null;
-    await maze.loadFromFile(file);
-    visualizer.loadMaze(maze.obj);
+    await obj.loadFromFile(file);
+    visualizer.loadMaze(obj.raw);
+    await maze.buildGraph(obj);
 }
 
 function getPointerPosition(event: PointerEvent) {
