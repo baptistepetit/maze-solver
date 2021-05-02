@@ -1,4 +1,4 @@
-import { Point3D } from './geometry';
+import { Face3D, Point3D } from './geometry';
 
 export class ObjEdge {
     public v1: number;
@@ -18,14 +18,12 @@ export class ObjEdge {
 }
 
 export class ObjFace {
-    public name: string;
     public v1: number;
     public v2: number;
     public v3: number;
     public v4: number;
 
-    constructor (name: string, v1: number, v2: number, v3: number, v4?: number) {
-        this.name = name;
+    constructor (v1: number, v2: number, v3: number, v4?: number) {
         this.v1 = v1;
         this.v2 = v2;
         this.v3 = v3;
@@ -52,7 +50,7 @@ export class ObjFace {
 
 export class Obj {
     raw: string;
-    objFaces: ObjFace[];
+    objFaces: Map<string, ObjFace>;
     vertices: Point3D[];
 
     private separateFaces (text: string): string {
@@ -75,7 +73,20 @@ export class Obj {
         return processed;
     }
 
-    loadFromFile(file: Blob): Promise<void> {
+    getFace3D (faceName: string): Face3D {
+        if (this.objFaces.has(faceName)) {
+            const faceObj = this.objFaces.get(faceName);
+            return new Face3D(
+                this.vertices[faceObj.v1],
+                this.vertices[faceObj.v2],
+                this.vertices[faceObj.v3],
+                this.vertices[faceObj.v4],
+            );
+        }
+        return null;
+    }
+
+    loadFromFile (file: Blob): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = (event) => {
@@ -88,13 +99,13 @@ export class Obj {
         });
     }
 
-    loadFromText(text: string): void {
+    loadFromText (text: string): void {
         this.raw = this.separateFaces(text);
 
         const lines = this.raw.split('\n');
         let vertexCount = 0;
         let faceCount = 0;
-        this.objFaces = [];
+        this.objFaces = new Map<string, ObjFace>();
         this.vertices = [];
 
         lines.forEach((line) => {
@@ -109,12 +120,14 @@ export class Obj {
             }
 
             if (cols[0] === 'f') {
-                this.objFaces[faceCount] = new ObjFace(
+                this.objFaces.set(
                     'Face.' + faceCount,
-                    parseInt(cols[1]) - 1,
-                    parseInt(cols[2]) - 1,
-                    parseInt(cols[3]) - 1,
-                    parseInt(cols[4]) - 1
+                    new ObjFace(
+                        parseInt(cols[1]) - 1,
+                        parseInt(cols[2]) - 1,
+                        parseInt(cols[3]) - 1,
+                        parseInt(cols[4]) - 1
+                    )
                 );
                 faceCount++;
             }

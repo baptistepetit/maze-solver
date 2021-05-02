@@ -23,40 +23,30 @@ export class Maze {
 
     async buildGraph(obj: Obj): Promise<void> {
         return new Promise<void>((resolve) => {
-            const edgeCommonFaces = new Map<string, number[]>();
-            obj.objFaces.forEach((face, faceIndex) => {
+            const edgeCommonFaces = new Map<string, string[]>();
+            obj.objFaces.forEach((face, faceName) => {
                 const edges = face.getEdges();
                 edges.forEach((edge) => {
                     if (edgeCommonFaces.has(JSON.stringify(edge))) {
-                        edgeCommonFaces.get(JSON.stringify(edge)).push(faceIndex);
+                        edgeCommonFaces.get(JSON.stringify(edge)).push(faceName);
                     } else {
-                        edgeCommonFaces.set(JSON.stringify(edge), [faceIndex]);
+                        edgeCommonFaces.set(JSON.stringify(edge), [faceName]);
                     }
                 });
             });
 
-            edgeCommonFaces.forEach((contiguousFaceIndices, commonEdge) => {
-                if (contiguousFaceIndices.length == 2) {  // else is non-shared or impossible
-                    const face0 = new Face3D(
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[0]].v1],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[0]].v2],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[0]].v3],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[0]].v4],
-                    );
-                    const face1 = new Face3D(
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[1]].v1],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[1]].v2],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[1]].v3],
-                        obj.vertices[obj.objFaces[contiguousFaceIndices[1]].v4],
-                    );
+            edgeCommonFaces.forEach((contiguousFaces, commonEdge) => {
+                if (contiguousFaces.length == 2) {  // else is non-shared or impossible
+                    const face0: Face3D = obj.getFace3D(contiguousFaces[0]);
+                    const face1: Face3D = obj.getFace3D(contiguousFaces[1]);
                     const edgeIndices: ObjEdge = JSON.parse(commonEdge);
                     const edge: Edge3D = {
                         p1: obj.vertices[edgeIndices.v1],
                         p2: obj.vertices[edgeIndices.v2],
                     };
 
-                    const distance = distanceBetweenFaces(face0, face1, edge);
-                    this.graph.addEdge(obj.objFaces[contiguousFaceIndices[0]].name, obj.objFaces[contiguousFaceIndices[1]].name, distance);
+                    const distance: number = distanceBetweenFaces(face0, face1, edge);
+                    this.graph.addEdge(contiguousFaces[0], contiguousFaces[1], distance);
                 }
             });
 
