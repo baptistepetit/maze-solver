@@ -26,6 +26,26 @@ export class Maze {
         this.graph = new Graph();
     }
 
+    private separateFaces (text: string): string {
+        let processed = '';
+        let faceCounter = 0;
+        const lines = text.split('\n');
+
+        lines.forEach(line => {
+            const cols = line.split(' ');
+
+            if (cols[0] !== 'o' && cols[0] !== 's') {
+                if (cols[0] === 'f') {
+                    processed += 'o Face.' + faceCounter + '\n';
+                    faceCounter++;
+                }
+                processed += (line + '\n');
+            }
+        });
+
+        return processed;
+    }
+
     private buildGraph(faces: ObjFace[], vertices: Point3D[]): void {
         const edgeCommonFaces = new Map<string, number[]>();
         faces.forEach((face, faceIndex) => {
@@ -80,9 +100,8 @@ export class Maze {
         });
     }
 
-    // TODO: Separate Faces on load
     loadFromText(text: string): void {
-        this.obj = text;
+        this.obj = this.separateFaces(text);
 
         const lines = text.split('\n');
         let vertexCount = 0;
