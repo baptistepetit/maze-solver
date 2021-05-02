@@ -42,40 +42,40 @@ function selectFace(event: PointerEvent) {
     );
 
     if (buttons.isSelectingStart && pickedFace != null) {
-        if (maze.startFace !== null) {
-            visualizer.setMaterialFromName(maze.startFace, 'None');
+        if (maze.startNode !== null) {
+            visualizer.setMaterialFromName(maze.startNode, 'None');
         }
-        if (pickedFace === maze.endFace) {
-            maze.endFace = null;
+        if (pickedFace === maze.endNode) {
+            maze.endNode = null;
         }
-        maze.startFace = pickedFace;
+        maze.startNode = pickedFace;
         visualizer.setMaterialFromName(
             pickedFace,
             'Start'
         );
     } else if (buttons.isSelectingEnd && pickedFace != null) {
-        if (maze.endFace !== null) {
-            visualizer.setMaterialFromName(maze.endFace, 'None');
+        if (maze.endNode !== null) {
+            visualizer.setMaterialFromName(maze.endNode, 'None');
         }
-        if (pickedFace === maze.startFace) {
-            maze.startFace = null;
+        if (pickedFace === maze.startNode) {
+            maze.startNode = null;
         }
-        maze.endFace = pickedFace;
+        maze.endNode = pickedFace;
         visualizer.setMaterialFromName(
             pickedFace,
             'End'
         );
     }
 
-    if (maze.startFace !== null && maze.endFace !== null) {
+    if (maze.startNode !== null && maze.endNode !== null) {
         solution?.forEach((value, key) => {
-            if (key !== maze.startFace && key !==maze.endFace) {
+            if (key !== maze.startNode && key !==maze.endNode) {
                 visualizer.setMaterialFromName(key, 'None');
             }
         });
-        solution = solver.solve(maze.graph, maze.startFace, maze.endFace);
+        solution = solver.solve(maze);
         solution.forEach((value, key) => {
-            if (key !== maze.startFace && key !==maze.endFace) {
+            if (key !== maze.startNode && key !==maze.endNode) {
                 visualizer.setMaterialFromName(key, 'Path');
             }
         });

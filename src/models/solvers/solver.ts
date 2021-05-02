@@ -1,5 +1,6 @@
-import { Graph, Node } from '../graph';
+import { Maze } from '../maze';
+import { Node } from '../graph';
 
 export interface Solver {
-    solve: (graph: Graph, start: Node, End: Node) => Map<Node, boolean>,
+    solve: (maze: Maze) => Map<Node, boolean>,
 }

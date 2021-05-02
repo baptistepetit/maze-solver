@@ -4,20 +4,23 @@ import {
     distanceBetweenFaces,
 } from './geometry';
 import {
+    Graph,
+    Node,
+} from './graph';
+import {
     Obj,
     ObjEdge,
 } from './obj';
-import { Graph } from './graph';
 
 
 export class Maze {
-    startFace: string;
-    endFace: string;
+    startNode: Node;
+    endNode: Node;
     graph: Graph;
 
     constructor() {
-        this.startFace = null;
-        this.endFace = null;
+        this.startNode = null;
+        this.endNode = null;
         this.graph = new Graph();
     }
 
